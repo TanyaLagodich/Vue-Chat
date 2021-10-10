@@ -1,33 +1,22 @@
 import express, { Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
+import { UserRouter } from './routes/User';
 
 import { UserModel } from './models/User';
 
 const app = express();
 const port = 3000;
 
-async function connectMongoDB(): Promise<void> {
-    try {
-        await mongoose.connect('mongodb://localhost:27017/chat');
+app.use(express.urlencoded());
+app.use(express.json());
 
-        const doc = new UserModel({
-            name: 'Bill',
-            email: 'billinitech.com',
-            avatar: 'https://i.imgur.com/dM7Thhn.png'
-          });
+app.use(UserRouter);
 
-          await doc.save();
-
-          console.log(doc.email); // 'bill@initech.com'
-    } catch (err) {
-        console.error(err);
-    }
-  }
+mongoose.connect('mongodb://localhost:27017/chat');
 
 app.get('/', (req: Request, res: Response) => {
     console.log('Hello World');
-    connectMongoDB();
-    res.send('Hello World');
+    res.json({ message: "Welcome to bezkoder application." });
 });
 
 app.get('/users', (req, res) => {
